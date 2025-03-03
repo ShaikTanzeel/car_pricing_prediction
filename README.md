@@ -105,5 +105,4 @@ git commit -m "Updated FastAPI script"
 git push origin main
 
 Contributors
-
-Shaik Tanzeel Ahmed (Replace with actual contributors if needed)
+Shaik Tanzeel Ahmed 
