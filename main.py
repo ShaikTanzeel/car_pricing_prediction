@@ -1,50 +1,54 @@
 import pickle
-import uvicorn
+import numpy as np
+import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
-import numpy as np
 
-# Load the trained model
+# Load trained model
 with open("car_price_model.pkl", "rb") as file:
     model = pickle.load(file)
 
-# Initialize FastAPI app
+# Load preprocessor (OneHotEncoder, Scaler, etc.)
+with open("preprocessor.pkl", "rb") as file:
+    preprocessor = pickle.load(file)
+
+# Define the expected input features
+class CarFeatures(BaseModel):
+    Levy: float
+    Manufacturer: str
+    Model: str
+    Prod_year: int
+    Category: str
+    Leather_interior: str
+    Fuel_type: str
+    Engine_volume: float
+    Mileage: float
+    Cylinders: int
+    Gear_box_type: str
+    Drive_wheels: str
+    Doors: int
+    Wheel: str
+    Color: str
+    Airbags: int
+
 app = FastAPI()
 
-# Define request model
-class CarFeatures(BaseModel):
-    feature1: float
-    feature2: float
-    feature3: float
-    feature4: float
-    feature5: float
-    feature6: float
-    feature7: float
-    feature8: float
-    feature9: float
-    feature10: float
-    feature11: float
-    feature12: float
-    feature13: float
-    feature14: float
-    feature15: float
-    feature16: float
-    feature17: float
-    feature18: float
-
-
-# Define home endpoint
-@app.get("/")
-def home():
-    return {"message": "Welcome to FastAPI!"}
-
-# Define prediction endpoint
 @app.post("/predict/")
 def predict_price(features: CarFeatures):
-    input_data = np.array([[features.feature1, features.feature2, features.feature3, features.feature4, features.feature5]])
-    predicted_price = model.predict(input_data)[0]
-    return {"predicted_price": predicted_price}
+    try:
+        # Convert input to DataFrame
+        input_data = pd.DataFrame([features.dict()])
 
-# Run the API (only for local testing)
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+        # Apply preprocessing to match training data
+        input_data_transformed = preprocessor.transform(input_data)
+
+        # Ensure feature names match exactly
+        correct_feature_names = list(preprocessor.get_feature_names_out())
+        input_data_transformed = pd.DataFrame(input_data_transformed, columns=correct_feature_names)
+
+        # Make prediction
+        predicted_price = model.predict(input_data_transformed)[0]
+        return {"predicted_price": predicted_price}
+
+    except Exception as e:
+        return {"error": str(e)}
