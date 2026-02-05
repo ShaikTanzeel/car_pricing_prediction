@@ -1,73 +1,55 @@
-**Car Price Prediction API**
+# Car Price Prediction API
 
-**Overview**
+A FastAPI-based machine learning API that predicts car prices based on various features.
 
-This project builds a Car Price Prediction API using FastAPI, which allows users to input car features and receive a predicted price. The machine learning model is trained on real-world car pricing data and is deployed on Render.
+## Overview
 
-**Features**
-Predict car prices based on input features
-FastAPI framework for efficient API handling
-Deployed on Render for online accessibility
-GitHub integration for version control
+This project uses a **Random Forest Regressor** trained on 19,237 car listings to predict prices based on features like manufacturer, model, year, mileage, and more.
 
+**Model Performance:**
+- R² Score: 67.26%
+- Mean Absolute Error: $5,113
 
-**Project Structure**
+## Quick Start
 
-car_pricing_prediction/
-│── main.py             # FastAPI application
-│── requirements.txt    # Dependencies
-│── car_price_model.pkl # Trained ML model
-│── README.md           # Project documentation
-│── .gitignore          # Ignored files
-└── data/               # Dataset (if applicable)
-
-**Installation & Setup**
-
-1. Clone the repository
-
-git clone https://github.com/ShaikTanzeel/car_pricing_prediction.git
-cd car_pricing_prediction
-
-2. Create a virtual environment
-
-python -m venv apienv
-source apienv/bin/activate  # On Windows: apienv\Scripts\activate
-
-3. Install dependencies
-
+### 1. Install Dependencies
+```bash
 pip install -r requirements.txt
+```
 
-**Running Locally**
+### 2. Train the Model (if needed)
+```bash
+# Download dataset (requires Kaggle API)
+kaggle datasets download deepcontractor/car-price-prediction-challenge -p data --unzip
 
-1. Start FastAPI server
+# Train model
+python train_model.py
+```
 
+### 3. Run the API
+```bash
 uvicorn main:app --reload
+```
 
-2. Access API documentation
+### 4. Test the API
+Open http://127.0.0.1:8000/docs for interactive documentation.
 
-Open Swagger UI: http://127.0.0.1:8000/docs
+## API Endpoints
 
-Open Redoc UI: http://127.0.0.1:8000/redoc
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Health check |
+| GET | `/health` | Detailed status |
+| GET | `/features` | Feature information |
+| POST | `/predict/` | Price prediction |
 
-API Endpoints
+## Example Request
 
-1. Home Endpoint
-
-GET /
-
-{
-  "message": "Welcome to FastAPI!"
-}
-
-2. Prediction Endpoint
-
+```json
 POST /predict/
-
-Request Body (JSON):
-
 {
-  "Levy": 0,
-  "Manufacturer": "Toyota",
+  "Levy": 500,
+  "Manufacturer": "TOYOTA",
   "Model": "Corolla",
   "Prod_year": 2015,
   "Category": "Sedan",
@@ -79,30 +61,48 @@ Request Body (JSON):
   "Gear_box_type": "Automatic",
   "Drive_wheels": "Front",
   "Doors": 4,
-  "Wheel": "Left",
+  "Wheel": "Left wheel",
   "Color": "Black",
   "Airbags": 6
 }
+```
 
-Response:
-
+**Response:**
+```json
 {
-  "predicted_price": 12000.50
+  "predicted_price": 21402.25,
+  "currency": "USD",
+  "status": "success"
 }
+```
 
-Deployment
+## Project Structure
 
-The API is deployed on Render and can be accessed at: 🔗 Live API on Render (Replace with actual link)
+```
+car_pricing_prediction/
+├── main.py              # FastAPI application
+├── train_model.py       # Model training script
+├── car_price_model.pkl  # Trained model
+├── preprocessor.pkl     # Data preprocessor
+├── requirements.txt     # Dependencies
+├── PROJECT_GUIDE.md     # Detailed learning guide
+├── README.md            # This file
+└── data/                # Training dataset
+```
 
-Version Control
+## Documentation
 
-GitHub Repository: https://github.com/ShaikTanzeel/car_pricing_prediction
+For a detailed explanation of the project, including:
+- What was wrong and how it was fixed
+- Machine learning concepts explained
+- Step-by-step code walkthrough
 
-Git Commands Used:
+See [PROJECT_GUIDE.md](PROJECT_GUIDE.md)
 
-git add .
-git commit -m "Updated FastAPI script"
-git push origin main
+## Author
 
-Contributors
-Shaik Tanzeel Ahmed 
+**Shaik Tanzeel Ahmed**
+
+## License
+
+MIT License
