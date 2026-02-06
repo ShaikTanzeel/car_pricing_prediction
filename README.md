@@ -102,7 +102,3 @@ See [PROJECT_GUIDE.md](PROJECT_GUIDE.md)
 ## Author
 
 **Shaik Tanzeel Ahmed**
-
-## License
-
-MIT License
